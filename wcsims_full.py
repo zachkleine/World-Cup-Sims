@@ -72,6 +72,7 @@ class TournamentResult:
     group_winners: List[str]
     advanced_third_place: List[str]
     games_played: Dict[str, int]
+    goals_scored: Dict[str, int]
 
 
 # =========================================================
@@ -189,7 +190,7 @@ def expected_goals(team_a: Team, team_b: Team, stage: str = "group") -> Tuple[fl
 
     p = elo_prob(team_a.strength, team_b.strength)
 
-    base = 1.35
+    base = 1.33
     scale = 2.0
 
     goal_diff = (p - 0.5) * scale
@@ -333,24 +334,29 @@ def sort_group_table(rows: List[GroupTableRow]) -> List[GroupTableRow]:
     )
 
 
-def simulate_group(group_teams: List[Team]) -> List[GroupTableRow]:
+def simulate_group(group_teams: List[Team], goals_scored: Dict[str, int]) -> List[GroupTableRow]:
     table = init_group_table(group_teams)
 
     for team_a, team_b in group_fixtures(group_teams):
         result = simulate_group_match(team_a, team_b)
         update_group_table(table, result)
+        goals_scored[result.team_a] += result.goals_a
+        goals_scored[result.team_b] += result.goals_b
 
     rows = list(table.values())
     return sort_group_table(rows)
 
 
-def simulate_all_groups(teams: List[Team]) -> Dict[str, List[GroupTableRow]]:
+def simulate_all_groups(
+    teams: List[Team],
+    goals_scored: Dict[str, int],
+) -> Dict[str, List[GroupTableRow]]:
     by_group: Dict[str, List[Team]] = defaultdict(list)
-    for team in teams:
-        by_group[team.group].append(team)
+    for t in teams:
+        by_group[t.group].append(t)
 
     return {
-        group: simulate_group(by_group[group])
+        group: simulate_group(by_group[group], goals_scored)
         for group in sorted(by_group.keys())
     }
 
@@ -445,6 +451,7 @@ def simulate_knockout_round(
     pairings: List[Tuple[str, str]],
     teams_by_name: Dict[str, Team],
     stage: str,
+    goals_scored: Dict[str, int]
 ) -> Tuple[List[str], List[MatchResult]]:
     winners: List[str] = []
     results: List[MatchResult] = []
@@ -453,6 +460,8 @@ def simulate_knockout_round(
         team_a = teams_by_name[a_name]
         team_b = teams_by_name[b_name]
         result = simulate_knockout_match(team_a, team_b, stage=stage)
+        goals_scored[result.team_a] += result.goals_a
+        goals_scored[result.team_b] += result.goals_b
         winners.append(result.winner)
         results.append(result)
 
@@ -472,10 +481,10 @@ def next_round_pairings(qualified: List[str]) -> List[Tuple[str, str]]:
 
 def run_single_tournament(teams: List[Team]) -> TournamentResult:
     teams_by_name = team_lookup(teams)
-
     games_played = {t.name: 3 for t in teams}
+    goals_scored = {t.name: 0 for t in teams}
 
-    group_results = simulate_all_groups(teams)
+    group_results = simulate_all_groups(teams, goals_scored)
     best_thirds = select_best_third_place(group_results)
 
     group_winners = [group_results[g][0].team for g in sorted(group_results.keys())]
@@ -486,42 +495,43 @@ def run_single_tournament(teams: List[Team]) -> TournamentResult:
     for team in r32_participants: 
         games_played[team] += 1
 
-    r16_teams, _ = simulate_knockout_round(r32_pairings, teams_by_name, "R32")
+    r16_teams, _ = simulate_knockout_round(r32_pairings, teams_by_name, "R32", goals_scored)
 
     r16_pairings = next_round_pairings(r16_teams)
     for team in r16_teams:
         games_played[team] += 1
 
-    qf_teams, _ = simulate_knockout_round(r16_pairings, teams_by_name, "R16")
+    qf_teams, _ = simulate_knockout_round(r16_pairings, teams_by_name, "R16", goals_scored)
 
     qf_pairings = next_round_pairings(qf_teams)
     
     for team in qf_teams:
         games_played[team] += 1
 
-    sf_teams, _ = simulate_knockout_round(qf_pairings, teams_by_name, "QF")
+    sf_teams, _ = simulate_knockout_round(qf_pairings, teams_by_name, "QF", goals_scored)
 
     sf_pairings = next_round_pairings(sf_teams)
     for team in sf_teams:
         games_played[team] += 1
 
-    finalists, sf_results = simulate_knockout_round(sf_pairings, teams_by_name, "SF")
+    finalists, sf_results = simulate_knockout_round(sf_pairings, teams_by_name, "SF", goals_scored)
 
     semifinal_losers: List[str] = []
     for result in sf_results:
         loser = result.team_b if result.winner == result.team_a else result.team_a
         semifinal_losers.append(loser)
 
-    for team in semifinal_losers:
-        games_played[team] += 1
+    # Uncomment based on usage in 3rd place game
+    # for team in semifinal_losers:
+    #    games_played[team] += 1
 
     third_place_pairings = [(semifinal_losers[0], semifinal_losers[1])]
-    simulate_knockout_round(third_place_pairings, teams_by_name, "ThirdPlace")
+    simulate_knockout_round(third_place_pairings, teams_by_name, "ThirdPlace", goals_scored)
 
     for team in finalists:
         games_played[team] += 1
     final_pairings = [(finalists[0], finalists[1])]
-    final_winner, final_results = simulate_knockout_round(final_pairings, teams_by_name, "Final")
+    final_winner, final_results = simulate_knockout_round(final_pairings, teams_by_name, "Final", goals_scored)
     champion = final_winner[0]
     final_result = final_results[0]
     runner_up = final_result.team_b if final_result.winner == final_result.team_a else final_result.team_a
@@ -535,7 +545,8 @@ def run_single_tournament(teams: List[Team]) -> TournamentResult:
         round_of_32=r32_participants,
         group_winners=group_winners,
         advanced_third_place=third_place_advancers,
-        games_played=games_played
+        games_played=games_played,
+        goals_scored=goals_scored
     )
 
 
@@ -552,6 +563,7 @@ def run_monte_carlo(teams: List[Team], n: int = SIMULATION_COUNT) -> Dict[str, D
     group_win_counts = Counter()
     best_third_counts = Counter()
     games_played_total = Counter()
+    goals_scored_total = Counter()
 
     for _ in range(n):
         result = run_single_tournament(teams)
@@ -578,6 +590,9 @@ def run_monte_carlo(teams: List[Team], n: int = SIMULATION_COUNT) -> Dict[str, D
         for team, games in result.games_played.items():
             games_played_total[team] += games
 
+        for team, goals in result.goals_scored.items():
+            goals_scored_total[team] += goals
+
     summary: Dict[str, Dict[str, float]] = {}
     for team in teams:
         summary[team.name] = {
@@ -589,6 +604,7 @@ def run_monte_carlo(teams: List[Team], n: int = SIMULATION_COUNT) -> Dict[str, D
             "win_group_pct": 100 * group_win_counts[team.name] / n,
             "advance_as_best_third_pct": 100 * best_third_counts[team.name] / n,
             "avg_games_played": games_played_total[team.name] / n,
+            "avg_goals_scored": goals_scored_total[team.name] / n
         }
 
     return summary
@@ -599,9 +615,18 @@ def print_top(summary: Dict[str, Dict[str, float]], metric: str, top_n: int = 15
 
     print(f"\nTop {top_n} by {metric}:")
     print("-" * 60)
-    for i, (team, stats) in enumerate(ranked[:top_n], start=1):
-        print(f"{i:>2}. {team:<20} {stats[metric]:>6.2f}%")
 
+    for i, (team, stats) in enumerate(ranked[:top_n], start=1):
+        value = stats[metric]
+
+        if "pct" in metric:
+            print(f"{i:>2}. {team:<20} {value:>6.2f}%")
+        elif "goals" in metric:
+            print(f"{i:>2}. {team:<20} {value:>6.2f} goals")
+        elif "games" in metric:
+            print(f"{i:>2}. {team:<20} {value:>6.2f} games")
+        else:
+            print(f"{i:>2}. {team:<20} {value:>6.2f}")
 
 if __name__ == "__main__":
     base_dir = Path(__file__).resolve().parent
@@ -615,3 +640,4 @@ if __name__ == "__main__":
     print_top(summary, "make_final_pct", top_n=20)
     print_top(summary, "make_semis_pct", top_n=20)
     print_top(summary, "avg_games_played", top_n=20)
+    print_top(summary, "avg_goals_scored", top_n=20)
