@@ -1,7 +1,7 @@
 import os
 import sys
 from typing import Any, Dict, List
-
+import numpy as np
 import pandas as pd
 import requests
 
@@ -265,6 +265,11 @@ def main() -> None:
         "avg_american_odds": "avg_american_odds",
         "consensus_prob_weighted": "implied_probability"
     })
+
+    output_df["log_odds"] = np.log(
+        output_df["implied_probability"].clip(1e-6, 1 - 1e-6) /
+        (1 - output_df["implied_probability"].clip(1e-6, 1 - 1e-6))
+    )
 
     output_df.to_csv("data/outright_winner_odds.csv", index=False)
     print("\nSaved CSV: outright_winner_odds.csv")
