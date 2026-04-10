@@ -5,10 +5,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+INPUT_DIR = BASE_DIR / "input"
 
-DK_FILE = DATA_DIR / "DKToQualify.txt"
-FD_FILE = DATA_DIR / "FDToQualify.txt"
-BET365_FILE = DATA_DIR / "Bet365ToQualify.csv"
+DK_FILE = INPUT_DIR / "DKToQualify.txt"
+FD_FILE = INPUT_DIR / "FDToQualify.txt"
+BET365_FILE = INPUT_DIR / "Bet365ToQualify.csv"
 OUTPUT_FILE = DATA_DIR / "group_qualify_blended.csv"
 
 TEAM_ALIASES = {
