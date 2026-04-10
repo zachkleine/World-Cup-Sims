@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-DK_FILE = "data/DKGroupWinners.txt"
-FD_FILE = "data/FDGroupWinners.txt"
+DK_FILE = "input/DKGroupWinners.txt"
+FD_FILE = "input/FDGroupWinners.txt"
 OUTPUT_FILE = "data/group_winner_odds.csv"
 
 
