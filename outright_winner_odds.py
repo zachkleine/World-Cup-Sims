@@ -266,8 +266,8 @@ def main() -> None:
         "consensus_prob_weighted": "implied_probability"
     })
 
-    output_df.to_csv("world_cup_true_probabilities.csv", index=False)
-    print("\nSaved CSV: world_cup_true_probabilities.csv")
+    output_df.to_csv("data/outright_winner_odds.csv", index=False)
+    print("\nSaved CSV: outright_winner_odds.csv")
 
     pd.set_option("display.max_rows", 200)
     pd.set_option("display.width", 200)
