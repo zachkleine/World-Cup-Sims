@@ -29,7 +29,12 @@ random.seed(RANDOM_SEED)
 class Team:
     name: str
     group: str
-    strength: float
+    overall_strength: float
+    attack_rating: float
+    defense_rating: float
+    form_rating: float = 0.0
+    tempo_factor: float = 1.0
+    squad_rating: float = 0.0
     is_host: bool = False
 
 
@@ -109,25 +114,39 @@ THIRD_PLACE_SLOT_MAP = load_third_place_slot_map()
 # Replace these later with real qualified teams / real draw
 # =========================================================
 
-def load_strengths_from_csv(filepath: str | Path) -> Dict[str, float]:
-    strengths: Dict[str, float] = {}
+def load_team_profiles_from_csv(filepath: str) -> Dict[str, Dict[str, float]]:
+    team_profiles: Dict[str, Dict[str, float]] = {}
 
     with open(filepath, "r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
+
+        required = ["team", "overall_strength", "attack_rating", "defense_rating"]
+        missing = [col for col in required if col not in (reader.fieldnames or [])]
+        if missing:
+            raise ValueError(
+                f"CSV missing required columns: {missing}. Found: {reader.fieldnames}"
+            )
+
         for row in reader:
             team = row["team"].strip()
-            strength = float(row["strength"])
-            strengths[team] = strength
+            team_profiles[team] = {
+                "overall_strength": float(row["overall_strength"]),
+                "attack_rating": float(row["attack_rating"]),
+                "defense_rating": float(row["defense_rating"]),
+                "form_rating": float(row.get("form_rating") or 0.0),
+                "tempo_factor": float(row.get("tempo_factor") or 1.0),
+                "squad_rating": float(row.get("squad_rating") or 0.0),
+            }
 
-    return strengths
+    return team_profiles
 
 
-def build_placeholder_teams(strengths: Dict[str, float]) -> List[Team]:
+def build_placeholder_teams(team_profiles: Dict[str, Dict[str, float]]) -> List[Team]:
     group_map = {
-        "A": ["Mexico", "South Africa", "South Korea", "Czechia"],
+        "A": ["Mexico", "South Africa", "South Korea", "Czech Republic"],
         "B": ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"],
         "C": ["Brazil", "Morocco", "Haiti", "Scotland"],
-        "D": ["United States", "Paraguay", "Australia", "Turkey"],
+        "D": ["USA", "Paraguay", "Australia", "Turkey"],
         "E": ["Germany", "Curacao", "Ivory Coast", "Ecuador"],
         "F": ["Netherlands", "Japan", "Sweden", "Tunisia"],
         "G": ["Belgium", "Egypt", "Iran", "New Zealand"],
@@ -145,22 +164,28 @@ def build_placeholder_teams(strengths: Dict[str, float]) -> List[Team]:
 
     for group, team_names in group_map.items():
         for name in team_names:
-            if name not in strengths:
+            if name not in team_profiles:
                 missing_teams.append(name)
                 continue
 
+            row = team_profiles[name]
             teams.append(
                 Team(
                     name=name,
                     group=group,
-                    strength=strengths[name],
+                    overall_strength=float(row["overall_strength"]),
+                    attack_rating=float(row["attack_rating"]),
+                    defense_rating=float(row["defense_rating"]),
+                    form_rating=float(row.get("form_rating", 0.0)),
+                    tempo_factor=float(row.get("tempo_factor", 1.0)),
+                    squad_rating=float(row.get("squad_rating", 0.0)),
                     is_host=name in hosts,
                 )
             )
 
     if missing_teams:
         missing_str = ", ".join(sorted(missing_teams))
-        raise ValueError(f"Missing strength values for: {missing_str}")
+        raise ValueError(f"Missing team profiles for: {missing_str}")
 
     return teams
 
@@ -185,20 +210,48 @@ def logistic(x: float) -> float:
 
 
 def expected_goals(team_a: Team, team_b: Team, stage: str = "group") -> Tuple[float, float]:
-    def elo_prob(a, b):
-        return 1 / (1 + 10 ** ((b - a) / 400))
+    base_goals = BASE_GOALS
 
-    p = elo_prob(team_a.strength, team_b.strength)
+    strength_diff = team_a.overall_strength - team_b.overall_strength
+    strength_adj_a = 1 + (strength_diff / 800.0)
+    strength_adj_b = 1 - (strength_diff / 800.0)
 
-    base = 1.33
-    scale = 2.0
+    lam_a = (
+        base_goals
+        * team_a.attack_rating
+        * team_b.defense_rating
+        * team_a.tempo_factor
+        * strength_adj_a
+        * (1 + team_a.form_rating)
+        * (1 + team_a.squad_rating)
+    )
 
-    goal_diff = (p - 0.5) * scale
+    lam_b = (
+        base_goals
+        * team_b.attack_rating
+        * team_a.defense_rating
+        * team_b.tempo_factor
+        * strength_adj_b
+        * (1 + team_b.form_rating)
+        * (1 + team_b.squad_rating)
+    )
 
-    lam_a = base + goal_diff
-    lam_b = base - goal_diff
+    if stage == "group":
+        if team_a.is_host:
+            lam_a *= 1.08
+        if team_b.is_host:
+            lam_b *= 1.08
+    elif stage in {"R32", "R16"}:
+        if team_a.is_host:
+            lam_a *= 1.04
+        if team_b.is_host:
+            lam_b *= 1.04
 
-    return max(0.2, lam_a), max(0.2, lam_b)
+    if stage in {"R32", "R16", "QF", "SF", "Final", "ThirdPlace"}:
+        lam_a *= 0.95
+        lam_b *= 0.95
+
+    return max(0.15, lam_a), max(0.15, lam_b)
 
 
 def simulate_group_match(team_a: Team, team_b: Team) -> MatchResult:
@@ -258,7 +311,7 @@ def simulate_knockout_match(team_a: Team, team_b: Team, stage: str) -> MatchResu
             went_to_extra_time=True,
         )
 
-    penalty_win_prob_a = logistic((team_a.strength - team_b.strength) / 10.0)
+    penalty_win_prob_a = logistic((team_a.overall_strength - team_b.overall_strength) / 60.0)
     winner = team_a.name if random.random() < penalty_win_prob_a else team_b.name
 
     return MatchResult(
@@ -631,9 +684,9 @@ def print_top(summary: Dict[str, Dict[str, float]], metric: str, top_n: int = 15
 if __name__ == "__main__":
     base_dir = Path(__file__).resolve().parent
     strengths_path = base_dir / "team_strengths.csv"
-    strengths = load_strengths_from_csv(strengths_path)
+    team_profiles = load_team_profiles_from_csv(strengths_path)
 
-    teams = build_placeholder_teams(strengths)
+    teams = build_placeholder_teams(team_profiles)
     summary = run_monte_carlo(teams, n=SIMULATION_COUNT)
 
     print_top(summary, "win_world_cup_pct", top_n=20)
