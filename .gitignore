@@ -17,11 +17,6 @@ venv/
 data/
 input/
 
-# ---------------------------
-# CSV / outputs (optional)
-# ---------------------------
-*.csv
-
 # If you ONLY want to ignore generated CSVs but keep raw ones,
 # comment out the above and use something like:
 # combined_*.csv
