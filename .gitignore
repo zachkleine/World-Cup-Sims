@@ -1,0 +1,44 @@
+# ---------------------------
+# Python
+# ---------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# ---------------------------
+# Data folders (your request)
+# ---------------------------
+data/
+input/
+
+# ---------------------------
+# CSV / outputs (optional)
+# ---------------------------
+*.csv
+
+# If you ONLY want to ignore generated CSVs but keep raw ones,
+# comment out the above and use something like:
+# combined_*.csv
+
+# ---------------------------
+# OS / Editor junk
+# ---------------------------
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# ---------------------------
+# Logs
+# ---------------------------
+*.log
