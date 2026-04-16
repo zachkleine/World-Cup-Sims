@@ -54,9 +54,9 @@ def recency_weight(year: int) -> float:
     if year == 2026:
         return 1.00
     if year == 2025:
-        return 0.85
+        return 1.0
     if year == 2024:
-        return 0.65
+        return 0.8
     return 0.50
 
 
@@ -70,9 +70,9 @@ def get_competition_weight(competition: str, year: int) -> float:
         if year == 2026:
             return 0.65
         if year == 2025:
-            return 0.60
+            return 0.5
         if year == 2024:
-            return 0.45
+            return 0.35
         return 0.40
 
     if competition == "qualifier":
