@@ -174,7 +174,7 @@ def load_combined_xg(filepath: Path = COMBINED_XG_FILE) -> pd.DataFrame:
     return df
 
 
-def confidence_factor(total_effective_weight: pd.Series, pivot: float = 10.0) -> pd.Series:
+def confidence_factor(total_effective_weight: pd.Series, pivot: float = 14.0) -> pd.Series:
     """
     Shrinks xG influence for low-sample teams.
     """
@@ -243,12 +243,12 @@ def build_team_strengths(write_csv: bool = False) -> pd.DataFrame:
     # Overall strength: mostly Elo + markets, with xGD nudging it
     df["blended_strength_z"] = (
         0.30 * df["elo_z"]
-        + 0.22 * df["qual_log_odds_z"]
-        + 0.13 * df["group_log_odds_z"]
-        + 0.05 * df["outright_log_odds_z"]
+        + 0.08 * df["qual_log_odds_z"]
+        + 0.15 * df["group_log_odds_z"]
+        + 0.22 * df["outright_log_odds_z"]
         + 0.10 * df["form_z"]
         + 0.10 * df["squad_value_z"]
-        + 0.10 * (df["xgd_z"] * df["xg_confidence"])
+        + 0.05 * (df["xgd_z"] * df["xg_confidence"])
     )
 
     # Compress spread so the sim doesn't get too top-heavy
@@ -268,10 +268,11 @@ def build_team_strengths(write_csv: bool = False) -> pd.DataFrame:
     ) * 0.10
 
     df["defense_market_proxy"] = 1.0 - (
-        0.45 * df["qual_log_odds_z"]
-        + 0.25 * df["elo_z"]
-        + 0.15 * df["group_log_odds_z"]
-        + 0.15 * df["squad_value_z"]
+        0.38 * df["qual_log_odds_z"]
+        + 0.27 * df["elo_z"]
+        + 0.10 * df["group_log_odds_z"]
+        + 0.10 * df["squad_value_z"]
+        + 0.15 * df["outright_log_odds_z"]
     ) * 0.08
 
     # Pure xG-derived attack & defense
@@ -282,8 +283,8 @@ def build_team_strengths(write_csv: bool = False) -> pd.DataFrame:
     df["defense_xg_raw"] = (df["weighted_xga_per_90"] / xga_mean).clip(0.75, 1.30)
 
     # Blend xG into attack/defense using confidence
-    attack_xg_share = 0.35 * df["xg_confidence"]
-    defense_xg_share = 0.35 * df["xg_confidence"]
+    attack_xg_share = 0.28 * df["xg_confidence"]
+    defense_xg_share = 0.28 * df["xg_confidence"]
 
     df["attack_rating"] = (
         (1 - attack_xg_share) * df["attack_market_proxy"]

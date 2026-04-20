@@ -1,10 +1,11 @@
 from __future__ import annotations
-
+from datetime import datetime
 from dataclasses import dataclass
 from typing import Dict, List, Tuple, Optional
 import csv
 import json
 import math
+import pandas as pd
 import random
 from pathlib import Path
 from collections import defaultdict, Counter
@@ -575,8 +576,8 @@ def run_single_tournament(teams: List[Team]) -> TournamentResult:
         semifinal_losers.append(loser)
 
     # Uncomment based on usage in 3rd place game
-    # for team in semifinal_losers:
-    #    games_played[team] += 1
+    for team in semifinal_losers:
+       games_played[team] += 1
 
     third_place_pairings = [(semifinal_losers[0], semifinal_losers[1])]
     simulate_knockout_round(third_place_pairings, teams_by_name, "ThirdPlace", goals_scored)
@@ -681,10 +682,38 @@ def print_top(summary: Dict[str, Dict[str, float]], metric: str, top_n: int = 15
         else:
             print(f"{i:>2}. {team:<20} {value:>6.2f}")
 
+def write_summary_to_csv(summary: dict, output_dir: Path) -> None:
+    rows = []
+
+    for team, stats in summary.items():
+        row = {"team": team}
+        row.update(stats)
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
+
+    # Sort by most useful column
+    if "win_world_cup_pct" in df.columns:
+        df = df.sort_values("win_world_cup_pct", ascending=False)
+
+    # Create timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # File path
+    output_file = output_dir / f"sim_results_{timestamp}.csv"
+
+    df.to_csv(output_file, index=False)
+
+    print(f"\nSaved simulation results to: {output_file}")
+
 if __name__ == "__main__":
     base_dir = Path(__file__).resolve().parent
     strengths_path = base_dir / "team_strengths.csv"
     team_profiles = load_team_profiles_from_csv(strengths_path)
+    output_dir = base_dir / "output"
 
     teams = build_placeholder_teams(team_profiles)
     summary = run_monte_carlo(teams, n=SIMULATION_COUNT)
@@ -694,3 +723,5 @@ if __name__ == "__main__":
     print_top(summary, "make_semis_pct", top_n=20)
     print_top(summary, "avg_games_played", top_n=20)
     print_top(summary, "avg_goals_scored", top_n=20)
+
+    write_summary_to_csv(summary, output_dir)

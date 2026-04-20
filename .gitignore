@@ -16,6 +16,7 @@ venv/
 # ---------------------------
 data/
 input/
+output/
 
 # If you ONLY want to ignore generated CSVs but keep raw ones,
 # comment out the above and use something like:
