@@ -1,0 +1,146 @@
+player,team,american_odds,minutes_share,position,penalty_share
+Raul Jimenez,Mexico,250,0.75,FWD,0.85
+Santiago Gimenez,Mexico,600,0.80,FWD,0.10
+Roberto Alvarado,Mexico,700,0.70,FWD,0.00
+Hirving Lozano,Mexico,800,0.78,FWD,0.05
+Alexis Vega,Mexico,900,0.72,FWD,0.00
+German Berterame,Mexico,1000,0.55,FWD,0.00
+Julian Quinones,Mexico,1000,0.65,FWD,0.00
+Diego Lainez,Mexico,1000,0.55,FWD,0.00
+Cesar Huerta,Mexico,1200,0.65,FWD,0.00
+Sebastian Cordova,Mexico,2000,0.60,MID,0.00
+Orbelin Pineda,Mexico,2000,0.75,MID,0.00
+Luis Chavez,Mexico,2000,0.85,MID,0.10
+Edson Alvarez,Mexico,2000,0.90,MID,0.00
+Obed Vargas,Mexico,2500,0.50,MID,0.00
+Erick Sanchez,Mexico,2500,0.60,MID,0.00
+Luis Romo,Mexico,3000,0.70,MID,0.00
+Johan Vasquez,Mexico,3500,0.90,DEF,0.00
+Cesar Montes,Mexico,5000,0.90,DEF,0.00
+
+Christian Pulisic,USA,250,0.90,FWD,0.80
+Folarin Balogun,USA,275,0.88,FWD,0.05
+Josh Sargent,USA,600,0.70,FWD,0.00
+Haji Wright,USA,600,0.65,FWD,0.00
+Brenden Aaronson,USA,800,0.75,MID,0.05
+Ricardo Pepi,USA,1000,0.65,FWD,0.00
+Giovanni Reyna,USA,1000,0.70,MID,0.05
+Weston McKennie,USA,1400,0.85,MID,0.00
+Timothy Weah,USA,1400,0.80,FWD,0.00
+Malik Tillman,USA,1400,0.70,MID,0.00
+Diego Luna,USA,1400,0.60,MID,0.00
+Yunus Musah,USA,3500,0.85,MID,0.00
+Antonee Robinson,USA,5000,0.90,DEF,0.00
+Tyler Adams,USA,5000,0.90,MID,0.00
+Luca De La Torre,USA,5000,0.75,MID,0.00
+Joe Scally,USA,5000,0.85,DEF,0.00
+Chris Richards,USA,5000,0.90,DEF,0.00
+Tim Ream,USA,8000,0.80,DEF,0.00
+
+Jonathan David,Canada,200,0.92,FWD,0.90
+Cyle Larin,Canada,600,0.75,FWD,0.05
+Promise David,Canada,600,0.65,FWD,0.00
+Lucas Cavallini,Canada,1000,0.60,FWD,0.00
+Jayden Nelson,Canada,1200,0.65,FWD,0.00
+Tani Oluwaseyi,Canada,1200,0.60,FWD,0.00
+Alphonso Davies,Canada,1200,0.90,DEF,0.10
+Tajon Buchanan,Canada,1400,0.85,FWD,0.00
+Jacob Shaffelburg,Canada,1600,0.70,FWD,0.00
+David Junior Hoilett,Canada,1600,0.65,FWD,0.00
+Theodor Corbeanu,Canada,1600,0.65,FWD,0.00
+Liam Millar,Canada,1600,0.70,FWD,0.00
+Ismael Kone,Canada,2000,0.85,MID,0.00
+Stephen Eustaquio,Canada,2000,0.90,MID,0.05
+Jonathan Osorio,Canada,2000,0.80,MID,0.00
+Niko Sigur,Canada,2500,0.60,MID,0.00
+Nathan-Dylan Saliba,Canada,2500,0.60,MID,0.00
+Mark-Anthony Kaye,Canada,2500,0.70,MID,0.00
+
+Vinicius Junior,Brazil,250,0.92,FWD,0.10
+Raphinha,Brazil,300,0.90,FWD,0.10
+Joao Pedro,Brazil,600,0.80,FWD,0.05
+Estevao Willian,Brazil,900,0.70,FWD,0.00
+Richarlison,Brazil,1000,0.75,FWD,0.10
+Neymar,Brazil,1000,0.85,FWD,0.60
+Matheus Cunha,Brazil,1400,0.70,FWD,0.00
+Vitor Roque,Brazil,1600,0.65,FWD,0.00
+Gabriel Martinelli,Brazil,2000,0.80,FWD,0.00
+Lucas Paqueta,Brazil,3500,0.85,MID,0.05
+Casemiro,Brazil,4000,0.90,MID,0.00
+Bruno Guimaraes,Brazil,5000,0.90,MID,0.00
+Andrey Santos,Brazil,8000,0.60,MID,0.00
+Gabriel Magalhaes,Brazil,10000,0.90,DEF,0.00
+Marquinhos,Brazil,15000,0.90,DEF,0.00
+
+Scott McTominay,Scotland,300,0.90,MID,0.20
+Che Adams,Scotland,450,0.85,FWD,0.70
+Lawrence Shankland,Scotland,700,0.75,FWD,0.10
+John McGinn,Scotland,900,0.90,MID,0.10
+Ryan Christie,Scotland,1200,0.85,MID,0.00
+Lyndon Dykes,Scotland,1200,0.75,FWD,0.00
+Ben Doak,Scotland,1200,0.65,FWD,0.00
+Tommy Conway,Scotland,1400,0.65,FWD,0.00
+Lewis Ferguson,Scotland,2000,0.85,MID,0.00
+Billy Gilmour,Scotland,3000,0.85,MID,0.00
+Andrew Robertson,Scotland,4000,0.90,DEF,0.00
+
+Kai Havertz,Germany,400,0.90,FWD,0.20
+Serge Gnabry,Germany,650,0.85,FWD,0.00
+Deniz Undav,Germany,650,0.75,FWD,0.00
+Niclas Fullkrug,Germany,700,0.75,FWD,0.00
+Jamal Musiala,Germany,750,0.92,MID,0.10
+Florian Wirtz,Germany,800,0.90,MID,0.05
+Leroy Sane,Germany,900,0.85,FWD,0.00
+Karim Adeyemi,Germany,1200,0.75,FWD,0.00
+Leon Goretzka,Germany,2000,0.85,MID,0.00
+Joshua Kimmich,Germany,3500,0.95,MID,0.05
+
+Lamine Yamal,Spain,275,0.85,FWD,0.80
+Mikel Oyarzabal,Spain,400,0.80,FWD,0.10
+Ferran Torres,Spain,600,0.80,FWD,0.00
+Alvaro Morata,Spain,600,0.75,FWD,0.00
+Dani Olmo,Spain,900,0.85,MID,0.00
+Nico Williams,Spain,1400,0.85,FWD,0.00
+Pedri,Spain,1600,0.90,MID,0.00
+Rodri Hernandez,Spain,2000,0.95,MID,0.00
+
+Lionel Messi,Argentina,150,0.92,FWD,0.90
+Lautaro Martinez,Argentina,300,0.88,FWD,0.05
+Julian Alvarez,Argentina,400,0.85,FWD,0.05
+Nicolas Gonzalez,Argentina,1000,0.75,FWD,0.00
+Paulo Dybala,Argentina,1400,0.70,FWD,0.00
+Enzo Fernandez,Argentina,1400,0.90,MID,0.00
+Alexis Mac Allister,Argentina,2000,0.90,MID,0.00
+Rodrigo De Paul,Argentina,2500,0.90,MID,0.00
+
+Kylian Mbappe,France,-115,0.95,FWD,0.95
+Ousmane Dembele,France,300,0.85,FWD,0.05
+Michael Olise,France,550,0.80,FWD,0.00
+Marcus Thuram,France,1200,0.75,FWD,0.00
+Bradley Barcola,France,1200,0.75,FWD,0.00
+Christopher Nkunku,France,1400,0.75,FWD,0.00
+Randal Kolo Muani,France,1600,0.70,FWD,0.00
+Adrien Rabiot,France,2500,0.90,MID,0.00
+
+Cristiano Ronaldo,Portugal,225,0.88,FWD,0.90
+Bruno Fernandes,Portugal,350,0.92,MID,0.10
+Goncalo Ramos,Portugal,400,0.80,FWD,0.00
+Rafael Leao,Portugal,700,0.85,FWD,0.00
+Joao Felix,Portugal,800,0.80,FWD,0.00
+Pedro Neto,Portugal,1000,0.75,FWD,0.00
+Bernardo Silva,Portugal,1400,0.90,MID,0.00
+Ruben Dias,Portugal,5000,0.95,DEF,0.00
+
+Harry Kane,England,-230,0.95,FWD,0.90
+Bukayo Saka,England,800,0.90,FWD,0.05
+Jude Bellingham,England,1400,0.92,MID,0.05
+Phil Foden,England,1800,0.88,FWD,0.05
+Ollie Watkins,England,1800,0.75,FWD,0.00
+Declan Rice,England,3500,0.95,MID,0.00
+
+Memphis Depay,Netherlands,275,0.85,FWD,0.85
+Cody Gakpo,Netherlands,300,0.88,FWD,0.10
+Donyell Malen,Netherlands,350,0.80,FWD,0.05
+Wout Weghorst,Netherlands,800,0.70,FWD,0.00
+Xavi Simons,Netherlands,1400,0.85,MID,0.00
+Frenkie de Jong,Netherlands,3500,0.90,MID,0.00
